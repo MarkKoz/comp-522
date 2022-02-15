@@ -16,7 +16,15 @@ void loop()
 {
     static int button_state_prev = LOW;
     static uint8_t led_state = LOW;
+    static unsigned long time_prev = 0;
     static int16_t period = MIN_PERIOD;
+
+    unsigned long time = millis();
+    if ((time - time_prev) >= static_cast<uint16_t>(period)) {
+        time_prev = time;
+        led_state = ~led_state;
+        digitalWrite(LED_PIN, led_state);
+    }
 
     int button_state = digitalRead(BUTTON_PIN);
     if (button_state == HIGH && button_state != button_state_prev) {
@@ -25,9 +33,4 @@ void loop()
         period = ((period / 2 - MIN_PERIOD) % (MAX_PERIOD / 2 - MIN_PERIOD)) + MIN_PERIOD;
     }
     button_state_prev = button_state;
-
-    led_state = ~led_state;
-    digitalWrite(LED_PIN, led_state);
-
-    delay(static_cast<uint16_t>(period));
 }
