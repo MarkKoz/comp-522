@@ -5,7 +5,7 @@ const uint8_t LED_PIN = 13;
 
 const int16_t MIN_PERIOD = 1000; // 1 Hz
 const int16_t MAX_PERIOD = MIN_PERIOD / 8; // 8 Hz
-const uint8_t DEBOUNCE_THRESHOLD = 200; // 200 ms
+const uint8_t DEBOUNCE_THRESHOLD = 10; // 10 ms
 
 void setup()
 {
@@ -32,11 +32,11 @@ void loop()
     int button_state = digitalRead(BUTTON_PIN);
     if (button_state == HIGH && button_state != button_state_prev) {
         if ((time - button_time_prev) >= DEBOUNCE_THRESHOLD) {
+            button_time_prev = time;
             // Frequency needs to be signed because MIN_PERIOD > MAX_PERIOD.
             // Thus, subtracting MIN_PERIOD makes numbers go negative.
             period = ((period / 2 - MIN_PERIOD) % (MAX_PERIOD / 2 - MIN_PERIOD)) + MIN_PERIOD;
         }
-        button_time_prev = time;
     }
     button_state_prev = button_state;
 }
