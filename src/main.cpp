@@ -4,7 +4,7 @@
 const uint8_t SPEED_BUTTON = 2;
 const uint8_t TOGGLE_BUTTON = 4;
 
-const uint8_t DEBOUNCE_THRESHOLD = 10; // 10 ms
+const uint8_t DEBOUNCE_THRESHOLD = 20; // ms
 
 // Based on information from https://lastminuteengineers.com/28byj48-stepper-motor-arduino-tutorial/
 const uint16_t STEPS_PER_REVOLUTION = 2038;
