@@ -40,7 +40,7 @@ void loop()
     }
 
     if (is_pressed(SPEED_BUTTON, speed_state, speed_time)) {
-        speed_index = (speed_index + 1) % 4;
+        speed_index = stopped ? 0 : (speed_index + 1) % 4;
 
         Serial.print("Speed is now ");
         Serial.println(speed_index);
