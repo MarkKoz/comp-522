@@ -27,6 +27,10 @@ void loop()
         stopped = !stopped;
     }
 
+    if (digitalRead(SPEED_BUTTON) == LOW) {
+        speed_index = (speed_index + 1) % 4;
+    }
+
     if (!stopped) {
         stepper.setSpeed(SPEEDS[speed_index]);
         stepper.step(1);
