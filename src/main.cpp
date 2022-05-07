@@ -1,28 +1,17 @@
 #include <Arduino.h>
+#include <ardumidi.h>
 
 const uint_fast8_t ONE_VOLT = 51; // (51 / 255) * 5 = 1 volt
+const uint_fast8_t NOTES_PER_OCTAVE = 12;
+const uint_fast8_t MIDI_OCTAVE_OFFSET = 2; // Start at C1 instead of C-1.
 
-enum note : uint_fast8_t
-{
-    note_c = 0,
-    note_db = 1,
-    note_d = 2,
-    note_eb = 3,
-    note_e = 4,
-    note_f = 5,
-    note_gb = 6,
-    note_g = 7,
-    note_ab = 8,
-    note_a = 9,
-    note_bb = 10,
-    note_b = 11
-};
-
-void set_note(enum note note, uint_fast8_t octave);
+void set_note(uint_fast8_t note, uint_fast8_t octave);
 void set_voltage(float voltage);
 
 void setup()
 {
+    Serial.begin(115200);
+
     for (uint8_t i = 0; i < 8; ++i) {
         pinMode(i, OUTPUT);
     }
@@ -30,17 +19,21 @@ void setup()
 
 void loop()
 {
-    for (uint_fast8_t octave = 0; octave < 5; ++octave) {
-        for (uint_fast8_t i = 0; i < 12; ++i) {
-            set_note(static_cast<note>(i), octave);
-            delay(250); // 8th note at 120 bpm
+    if (midi_message_available() > 0) {
+        MidiMessage msg = read_midi_message();
+        if (msg.command == MIDI_NOTE_ON && msg.channel == 0) {
+            auto note = static_cast<uint_fast8_t>(msg.param1);
+
+            // This may end up doing some redundant calculations,
+            // but the code is easier to understand this way.
+            set_note(note % NOTES_PER_OCTAVE, (note / NOTES_PER_OCTAVE) - MIDI_OCTAVE_OFFSET);
         }
     }
 }
 
-void set_note(enum note note, uint_fast8_t octave)
+void set_note(uint_fast8_t note, uint_fast8_t octave)
 {
-    set_voltage(octave + (static_cast<uint_fast8_t>(note) / 12.0F));
+    set_voltage(octave + (note / 12.0F));
 }
 
 void set_voltage(float voltage)
