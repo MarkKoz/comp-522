@@ -1,23 +1,60 @@
 repos:
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.1.0
-      hooks:
-          - id: check-merge-conflict
-          - id: end-of-file-fixer
-          - id: mixed-line-ending
-            args: [--fix=no]
-          - id: trailing-whitespace
-    - repo: https://github.com/pocc/pre-commit-hooks
-      rev: v1.3.5
-      hooks:
-          - id: clang-format
-            args: [-i, --style=file]
-            exclude: '^lib/.+$'
-          - id: clang-tidy
-            args: [
-                --fix,
-                --quiet,
-                -p=cmake-build-uno,
-                --extra-arg=--target=avr
-            ]
-            exclude: '^lib/.+$'
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=no]
+      - id: trailing-whitespace
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+      - id: python-check-blanket-noqa
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-format
+        args: [-i, --style=file]
+        exclude: '^lib/.+$'
+      - id: clang-tidy
+        args: [
+          --fix,
+          --quiet,
+          -p=cmake-build-uno,
+          --extra-arg=--target=avr
+        ]
+        exclude: '^lib/.+$'
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        language_version: "3.10"
+  - repo: https://github.com/PyCQA/flake8
+    rev: &flake8_version 4.0.1
+    hooks:
+      - &flake8_hook
+        id: flake8
+        additional_dependencies:
+          - flake8-annotations~=2.7.0
+          - flake8-docstrings~=1.6
+          - flake8-pytest-style~=1.6
+          - flake8-string-format~=0.3.0
+          - pep8-naming~=0.12
+          - pydocstyle~=6.1.1
+  - repo: https://github.com/PyCQA/flake8
+    rev: *flake8_version
+    hooks:
+      - <<: *flake8_hook
+        alias: flake8-annotate
+        name: flake8 (with annotations)
+        stages: [manual]
+        args: [
+          --format,
+          "::error file=%(path)s,line=%(row)d,col=%(col)d::[flake8] %(code)s: %(text)s",
+        ]
