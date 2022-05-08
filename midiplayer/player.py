@@ -5,7 +5,7 @@ import mido
 
 def play(file: io.RawIOBase, output_port_name: str) -> None:
     """Play a MIDI file in the given port."""
-    midi_file = mido.MidiFile(file)
+    midi_file = mido.MidiFile(file=file)
 
     with mido.open_output(output_port_name, autoreset=True) as port:
         try:
