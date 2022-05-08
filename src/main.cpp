@@ -10,9 +10,9 @@ const uint_fast8_t PIN_MUTE = 9;
 const byte MIDI_ALL_SOUNDS_OFF = 120;
 const byte MIDI_ALL_NOTES_OFF = 123;
 
-bool is_reset_msg(const MidiMessage& msg);
-void set_note(uint_fast8_t note, uint_fast8_t octave);
-void set_voltage(float voltage);
+inline bool is_reset_msg(const MidiMessage& msg) __attribute__((always_inline));
+inline void set_note(uint_fast8_t note, uint_fast8_t octave) __attribute__((always_inline));
+inline void set_voltage(float voltage) __attribute__((always_inline));
 
 void setup()
 {
@@ -52,12 +52,12 @@ bool is_reset_msg(const MidiMessage& msg)
         && (msg.param1 == MIDI_ALL_NOTES_OFF || msg.param1 == MIDI_ALL_SOUNDS_OFF);
 }
 
-void set_note(uint_fast8_t note, uint_fast8_t octave)
+void set_note(const uint_fast8_t note, const uint_fast8_t octave)
 {
     set_voltage(octave + (note / 12.0F));
 }
 
-void set_voltage(float voltage)
+void set_voltage(const float voltage)
 {
     PORTD = static_cast<uint8_t>(lroundf(ONE_VOLT * voltage));
 }
